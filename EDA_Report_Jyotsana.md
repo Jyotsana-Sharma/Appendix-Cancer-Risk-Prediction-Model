@@ -14,9 +14,28 @@
 | Total Records | 260,000 |
 | Features | 25 (demographics, lifestyle, clinical markers, treatment) |
 | Target Variable | `Appendix_Cancer_Prediction` (Yes / No) |
-| Missing Values | None |
+| Missing Values | 2 columns (see Section 1b) |
 | Cancer-Positive | 39,287 (15.1%) |
 | Cancer-Negative | 220,713 (84.9%) |
+
+---
+
+## 1b. Missing Value Analysis & Handling
+
+| Column | Missing Count | % of Total | Interpretation | Action Taken |
+|--------|--------------|------------|----------------|--------------|
+| `Chronic_Diseases` | 130,087 | **50.0%** | Only 2 values exist (Hypertension, Diabetes) — NaN means no chronic disease | Filled with `"None"` |
+| `Treatment_Type` | 26,074 | **10.0%** | Surgery / Chemotherapy / Radiation exist — NaN means no treatment received | Filled with `"None / Untreated"` |
+
+**Are the missing values informative?**
+
+Cancer rate in rows where `Chronic_Diseases` is missing: **15.10%** vs present: **15.12%** — virtually identical. The missingness carries no additional signal and is safely interpretable as "no condition."
+
+Cancer rate in rows where `Treatment_Type` is missing: **15.50%** vs present: **15.07%** — a 0.43pp difference, negligible. Missing likely means untreated at the time of record.
+
+**Imputation strategy:** Structural imputation (NaN = a real category, not random absence). No rows were dropped.
+
+---
 
 The dataset covers patient demographics (age, gender, country, BMI), lifestyle factors (smoking, alcohol, physical activity, diet), clinical markers (WBC, RBC, Platelet Count, Cholesterol), and treatment outcomes.
 
@@ -166,6 +185,7 @@ For reference, a correlation of |r| = 0.006 explains only 0.004% of variance in 
 ## 4. Insights for Report (Bullet Points)
 
 - **15.1% of 260,000 patients** are cancer-positive — the dataset is class-imbalanced (5.6:1 ratio).
+- **Two columns have missing values**: `Chronic_Diseases` (50% missing — imputed as "None") and `Treatment_Type` (10% missing — imputed as "None / Untreated"). Missingness is structural, not random, and carries no additional signal for the target.
 - **Gender is the only statistically significant feature** (p = 0.014); all other 23 features are non-significant.
 - **No blood marker, risk factor, or demographic variable** meaningfully separates cancer from non-cancer patients.
 - **All feature correlations with the target are near-zero** (max |r| = 0.006), indicating the label is largely independent of the provided features.
